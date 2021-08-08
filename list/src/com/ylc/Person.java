@@ -26,9 +26,9 @@ public class Person {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
+        if (this == o) return true; //内存地址相同，肯定相同
+        if (o == null || getClass() != o.getClass()) return false;//传入对象为null或者类型不相同，则不相同
+        Person person = (Person) o;//到这就是类型相同，但是内存地址不同的情况
         return Objects.equals(name, person.name) && Objects.equals(age, person.age);
     }
 

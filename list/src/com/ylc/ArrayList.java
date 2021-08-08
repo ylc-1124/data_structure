@@ -87,8 +87,8 @@ public class ArrayList<E> {
     public void add(int index, E element) {
         rangeCheckForAdd(index);
         ensureCapacity(size + 1); //至少保证容量有size+1，否则不能添加
-        for (int i = size - 1; i >= index; i--) {
-            elements[i + 1] = elements[i];
+        for (int i = size; i > index; i--) {
+            elements[i] = elements[i - 1];
         }
         elements[index] = element;
         size++;
@@ -103,12 +103,21 @@ public class ArrayList<E> {
     public E remove(int index) {
         rangeCheck(index);
         E old = elements[index];
-        for (int i = index + 1; i <= size - 1; i++) {
+        for (int i = index + 1; i < size; i++) {
             elements[i - 1] = elements[i];
         }
         size--;
         elements[size] = null;  //细节：删除一个元素最后一个索引得置null，否则会内存泄漏
         return old;
+    }
+
+    /**
+     * 删除指定元素
+     * @param element
+     * @return
+     */
+    public void remove(E element) {
+        remove(indexOf(element));
     }
 
     /**
