@@ -1,8 +1,15 @@
 package com.ylc;
 
-public class LinkedList<E> extends AbstractList<E> {
+/**
+ * 使用虚拟头节点的链表实现
+ * @param <E>
+ */
+public class LinkedList2<E> extends AbstractList<E> {
     private Node<E> first;
 
+    public LinkedList2() {  //first指向虚拟头结点
+        first = new Node<>(null, null);
+    }
     private static class Node<E> {
         E element;
         Node<E> next;
@@ -13,15 +20,8 @@ public class LinkedList<E> extends AbstractList<E> {
         }
     }
 
-
     @Override
     public E get(int index) {
-        /**
-         * 时间复杂度：
-         *   最好：O(1)
-         *   最坏：O(n)
-         *   平均：O(n)
-         */
         return node(index).element;
     }
 
@@ -33,12 +33,6 @@ public class LinkedList<E> extends AbstractList<E> {
      */
     @Override
     public E set(int index, E element) {
-        /**
-         * 时间复杂度：
-         *   最好：O(1)
-         *   最坏：O(n)
-         *   平均：O(n)
-         */
         Node<E> node = node(index);
         E old = node.element;
         node.element = element;
@@ -48,40 +42,19 @@ public class LinkedList<E> extends AbstractList<E> {
     @Override
     public void add(int index, E element) {
         rangeCheckForAdd(index);
-        /**
-         * 时间复杂度：
-         *   最好：O(1)
-         *   最坏：O(n)
-         *   平均：O(n)
-         */
-        if (index == 0) { //细节：index为0要特殊处理，否则会报错
-            first = new Node<E>(element, first);
-
-        } else {
-            Node<E> prev = node(index - 1); //获取前趋节点
+        Node<E> prev = index == 0 ? first : node(index - 1); //获取前趋节点
             prev.next = new Node<>(element, prev.next);
-
-        }
         size++;
     }
 
     @Override
     public E remove(int index) {
         rangeCheck(index);
-        /**
-         * 时间复杂度：
-         *   最好：O(1)
-         *   最坏：O(n)
-         *   平均：O(n)
-         */
-        Node<E> node = first;
-        if (index == 0) {
-            first = first.next;
-        } else {
-            Node<E> prev = node(index - 1);
-            node = prev.next;
-            prev.next = node.next;
-        }
+
+        Node<E> prev = index == 0 ? first : node(index - 1);
+        Node<E> node = prev.next;
+        prev.next = node.next;
+
         size--;
         return node.element;
     }
@@ -119,7 +92,7 @@ public class LinkedList<E> extends AbstractList<E> {
     private Node<E> node(int index) {
         rangeCheck(index);
 
-        Node<E> node = first;
+        Node<E> node = first.next;
         for (int i = 0; i < index; i++) {
             node = node.next;
         }
@@ -130,7 +103,7 @@ public class LinkedList<E> extends AbstractList<E> {
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("Size:").append(size).append(" [");
-        Node<E> node = first;
+        Node<E> node = first.next;
         for (int i = 0; i < size; i++) {
             if (i != 0) {
                 s.append(",");

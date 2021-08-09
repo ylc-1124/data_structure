@@ -60,7 +60,8 @@ public abstract class AbstractList<E> implements List<E>{
 
     /**
      * 添加到元素末尾
-     *
+     *  在 ArrayList中 最好:O(1)     最坏:O(n)   平均：O(1)   均摊：O(1)
+     *  在 LinkedList中   最好:O(1)     最坏:O(n)   平均：O(n)
      * @param element
      */
     public void add(E element) {

@@ -1,17 +1,21 @@
 package com.ylc;
 
-public class ArrayList<E> extends AbstractList<E> {
+/**
+ * 有动态缩容操作
+ * @param <E>
+ */
+public class ArrayList2<E> extends AbstractList<E> {
 
 
     private E[] elements;
     private static final int DEFAULT_CAPACITY = 10;
 
-    public ArrayList(int capacity) {
+    public ArrayList2(int capacity) {
         capacity = capacity < DEFAULT_CAPACITY ? DEFAULT_CAPACITY : capacity;
         elements = (E[]) new Object[capacity];
     }
 
-    public ArrayList() {
+    public ArrayList2() {
         this(DEFAULT_CAPACITY);
     }
 
@@ -76,9 +80,27 @@ public class ArrayList<E> extends AbstractList<E> {
         }
         size--;
         elements[size] = null;  //细节：删除一个元素最后一个索引得置null，否则会内存泄漏
+        trim();
         return old;
     }
 
+    /**
+     * 缩容操作
+     */
+    private void trim() {
+        int capacity = elements.length;
+        int newCapacity = capacity >> 1;
+        if (size >= newCapacity || capacity <= DEFAULT_CAPACITY) {
+            return;
+        }
+        //来到这说明剩余空间很大，需要缩容
+        E[] newElements = (E[]) new Object[newCapacity];
+        for (int i = 0; i < size; i++) {
+            newElements[i] = elements[i];
+        }
+        elements = newElements;
+        System.out.println(capacity+"缩容为=>"+newCapacity);
+    }
     /**
      * 查看元素所在索引位置
      *
@@ -139,6 +161,7 @@ public class ArrayList<E> extends AbstractList<E> {
             newElements[i] = elements[i];
         }
         elements = newElements;
+        System.out.println(oldCapacity+"扩容为=>"+newCapacity);
     }
 }
 
