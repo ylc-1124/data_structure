@@ -130,6 +130,11 @@ public class ArrayList2<E> extends AbstractList<E> {
             elements[i] = null;  //细节：使用泛型后数组里面都是地址，必须置null，否则会造成内存泄露
         }
         size = 0;  //数组是可以重复利用的留下
+
+        //如果数组容量大于默认容量，则缩容成默认容量，仅供参考
+        if (elements != null && elements.length > DEFAULT_CAPACITY) {
+            elements = (E[]) new Object[DEFAULT_CAPACITY];
+        }
     }
 
     @Override

@@ -1,13 +1,15 @@
-package com.ylc;
+package com.ylc.single;
+
+import com.ylc.AbstractList;
 
 /**
  * 使用虚拟头节点的链表实现
  * @param <E>
  */
-public class LinkedList2<E> extends AbstractList<E> {
+public class SingleLinkedList2<E> extends AbstractList<E> {
     private Node<E> first;
 
-    public LinkedList2() {  //first指向虚拟头结点
+    public SingleLinkedList2() {  //first指向虚拟头结点
         first = new Node<>(null, null);
     }
     private static class Node<E> {
