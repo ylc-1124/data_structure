@@ -8,8 +8,28 @@ public class Test {
 //        testList(new ArrayList<>());
 //		testList(new LinkedList<>());
     //    testList(new SingleCircleLinkedList<>());
-        testList(new CircleLinkedList<>());
+     //   testList(new CircleLinkedList<>());
+        josephus(3); //喊三次，死一个
 
+    }
+
+    static void josephus(int n) {
+        CircleLinkedList<Integer> list = new CircleLinkedList<>();
+        int loap = n; //保存要叫多少声死一个人
+        for (int i = 1; i <= 8; i++) {
+            list.add(i);
+        }
+        list.reset();
+        while (!list.isEmpty()) {
+            n = loap;
+            while (n > 1) {
+                list.next();
+                n--;
+            }
+//            list.next();
+//            list.next();
+            System.out.println(list.remove());
+        }
     }
     static void testList(List<Integer> list) {
         list.add(11);

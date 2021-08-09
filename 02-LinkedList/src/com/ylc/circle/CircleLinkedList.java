@@ -9,6 +9,7 @@ import com.ylc.AbstractList;
 public class CircleLinkedList<E> extends AbstractList<E> {
     private Node<E> first;
     private Node<E> last;
+    private Node<E> current;
 
     private static class Node<E> {
         E element;
@@ -39,6 +40,17 @@ public class CircleLinkedList<E> extends AbstractList<E> {
         }
     }
 
+    public void reset() {
+        current = first;
+    }
+
+    public E next() {
+        if (current == null) {
+            return null;
+        }
+        current = current.next;
+        return current.element;
+    }
 
     @Override
     public E get(int index) {
@@ -92,12 +104,28 @@ public class CircleLinkedList<E> extends AbstractList<E> {
     @Override
     public E remove(int index) {
         rangeCheck(index);
-        Node<E> node = first;
+        return remove(node(index));
+    }
+
+    public E remove() {
+        if (current == null) {
+            return null;
+        }
+        Node<E> next = current.next;
+        E element = remove(current);
+        if (size == 0) {
+            current = null;
+        } else {
+            current = next;
+        }
+        return element;
+    }
+
+    private E remove(Node<E> node) {
         if (size == 1) {
             first = null;
             last = null;
         } else {
-            node = node(index);
             Node<E> prev = node.prev; //可能为null
             Node<E> next = node.next; //可能为null
             prev.next = next;
