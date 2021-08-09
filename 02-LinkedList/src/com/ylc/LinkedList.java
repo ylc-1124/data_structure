@@ -34,6 +34,7 @@ public class LinkedList<E> extends AbstractList<E> {
 
     @Override
     public void add(int index, E element) {
+        rangeCheckForAdd(index);
         if (index == 0) { //细节：index为0要特殊处理，否则会报错
             first = new Node<E>(element, first);
 
@@ -47,6 +48,7 @@ public class LinkedList<E> extends AbstractList<E> {
 
     @Override
     public E remove(int index) {
+        rangeCheck(index);
         Node<E> node = first;
         if (index == 0) {
             first = first.next;
