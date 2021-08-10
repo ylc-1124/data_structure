@@ -7,7 +7,7 @@ import java.util.Comparator;
 
 public class Test {
     public static void main(String[] args) {
-        test4();
+        test1();
     }
 
     static void test4() {
@@ -30,6 +30,12 @@ public class Test {
         }
 
         BinaryTrees.println(bst);
+        bst.inorder(new BinarySearchTree.Visitor<Integer>() {
+            @Override
+            public void visit(Integer element) {
+                System.out.print(" _"+element+"_ ");
+            }
+        });
     }
   /*  static void test2() {
         Integer data[] = new Integer[] {

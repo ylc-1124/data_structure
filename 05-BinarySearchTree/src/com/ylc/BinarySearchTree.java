@@ -3,6 +3,8 @@ package com.ylc;
 import com.ylc.printer.BinaryTreeInfo;
 
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /*
 小细节：传入泛型要实现Comparable接口，因为泛型不确定性可能传入的是一个接口，
@@ -58,6 +60,28 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
             this.parent = parent;
         }
     }
+
+    public static interface Visitor<E> {
+        void visit(E element);
+    }
+
+    public void levelOrder(Visitor<E> visitor) {
+        if (root==null||visitor==null) return;
+        Queue<Node<E>> queue = new LinkedList<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            Node<E> node = queue.poll();
+            visitor.visit(node.element);
+            if (node.left != null) {
+                queue.offer(node.left);
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            }
+        }
+    }
+
     public int size() {
         return size;
     }
@@ -67,8 +91,103 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
     }
 
     public void clear() {
-
+        root = null;
+        size = 0;
     }
+
+    public void preorder(Visitor<E> visitor) {
+        preorder(root,visitor);
+    }
+
+    private void preorder(Node<E> node, Visitor<E> visitor) {
+        if (node==null||visitor==null) return;
+
+        visitor.visit(node.element);
+        preorder(node.left, visitor);
+        preorder(node.right, visitor);
+    }
+    public void inorder(Visitor<E> visitor) {
+        inorder(root,visitor);
+    }
+
+    private void inorder(Node<E> node, Visitor<E> visitor) {
+        if (node==null||visitor==null) return;
+        inorder(node.left, visitor);
+        visitor.visit(node.element);
+        inorder(node.right, visitor);
+    }
+    public void postorder(Visitor<E> visitor) {
+        postorder(root,visitor);
+    }
+
+    private void postorder(Node<E> node, Visitor<E> visitor) {
+        if (node==null||visitor==null) return;
+        postorder(node.left, visitor);
+        postorder(node.right, visitor);
+        visitor.visit(node.element);
+    }
+    /**
+     * 前序遍历
+     *//*
+    public void preorderTraversal() {
+        preorderTraversal(root);
+    }
+
+    private void preorderTraversal(Node<E> node) {
+        if (node==null) return;
+        System.out.println(node.element);
+        preorderTraversal(node.left);
+        preorderTraversal(node.right);
+    }
+
+    *//**
+     * 中序遍历
+     *//*
+    public void inorderTraversal() {
+        inorderTraversal(root);
+    }
+
+    private void inorderTraversal(Node<E> node) {
+        if (node==null) return;
+        inorderTraversal(node.left);
+        System.out.println(node.element);
+        inorderTraversal(node.right);
+    }
+
+    *//**
+     * 后序遍历
+     *//*
+    public void postorderTraversal() {
+        postorderTraversal(root);
+    }
+
+    private void postorderTraversal(Node<E> node) {
+        if (node==null) return;
+        postorderTraversal(node.left);
+        postorderTraversal(node.right);
+        System.out.println(node.element);
+    }
+
+    *//**
+     * 层序遍历:使用队列
+     *//*
+    public void levelOrderTraversal() {
+        if (root==null) return;
+        Queue<Node<E>> queue = new LinkedList<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            Node<E> node = queue.poll();
+            System.out.println(node.element);
+            if (node.left != null) {
+                queue.offer(node.left);
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            }
+        }
+    }*/
+
 
     public void add(E element) {
         elementNotNullCheck(element);
