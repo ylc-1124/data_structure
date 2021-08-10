@@ -7,7 +7,7 @@ import java.util.Comparator;
 
 public class Test {
     public static void main(String[] args) {
-        test1();
+        test7();
     }
 
     static void test4() {
@@ -19,6 +19,25 @@ public class Test {
         bst.add(new Person(10,"lucy"));
         BinaryTrees.println(bst);
     }
+    static void test7() {
+        Integer data[] = new Integer[] {
+                7, 4, 9, 2, 5, 8, 11, 3, 12, 1
+        };
+
+        BinarySearchTree<Integer> bst = new BinarySearchTree<>();
+        for (int i = 0; i < data.length; i++) {
+            bst.add(data[i]);
+        }
+
+        BinaryTrees.println(bst);
+
+        bst.remove(7);
+        bst.remove(1);
+        bst.remove(5);
+        bst.remove(11);
+        BinaryTrees.println(bst);
+    }
+
     static void test1() {
         Integer data[] = new Integer[] {
                 7, 4, 9, 2, 5, 8, 11, 3, 12, 1
@@ -30,7 +49,8 @@ public class Test {
         }
 
         BinaryTrees.println(bst);
-        System.out.println(bst);
+        System.out.println(bst.height());
+        System.out.println(bst.isComplete());
 //        bst.levelOrder(new BinarySearchTree.Visitor<Integer>() {
 //            @Override
 //            public boolean visit(Integer element) {
