@@ -30,10 +30,11 @@ public class Test {
         }
 
         BinaryTrees.println(bst);
-        bst.inorder(new BinarySearchTree.Visitor<Integer>() {
+        bst.levelOrder(new BinarySearchTree.Visitor<Integer>() {
             @Override
-            public void visit(Integer element) {
-                System.out.print(" _"+element+"_ ");
+            public boolean visit(Integer element) {
+                System.out.print(" _" + element + "_ ");
+                return element == 2 ? true : false;
             }
         });
     }
