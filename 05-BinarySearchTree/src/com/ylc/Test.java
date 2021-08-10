@@ -30,13 +30,14 @@ public class Test {
         }
 
         BinaryTrees.println(bst);
-        bst.levelOrder(new BinarySearchTree.Visitor<Integer>() {
-            @Override
-            public boolean visit(Integer element) {
-                System.out.print(" _" + element + "_ ");
-                return element == 2 ? true : false;
-            }
-        });
+        System.out.println(bst);
+//        bst.levelOrder(new BinarySearchTree.Visitor<Integer>() {
+//            @Override
+//            public boolean visit(Integer element) {
+//                System.out.print(" _" + element + "_ ");
+//                return element == 2 ? true : false;
+//            }
+//        });
     }
   /*  static void test2() {
         Integer data[] = new Integer[] {

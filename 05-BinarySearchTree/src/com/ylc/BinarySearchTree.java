@@ -127,6 +127,20 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         postorder(root,visitor);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        toString(root, sb,"");
+        return sb.toString();
+    }
+
+    private void toString(Node<E> node, StringBuilder sb,String prefix) {
+        if (node==null) return;
+        sb.append(prefix).append(node.element).append("\n");
+        toString(node.left, sb,prefix+"[L]");
+        toString(node.right, sb,prefix+"[R]");
+    }
+
     private void postorder(Node<E> node, Visitor<E> visitor) {
         if (node==null||visitor.stop) return;
         postorder(node.left, visitor);
