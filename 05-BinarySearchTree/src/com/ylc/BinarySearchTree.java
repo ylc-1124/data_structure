@@ -327,6 +327,10 @@ public class BinarySearchTree<E> implements BinaryTreeInfo {
         remove(node(element));
     }
 
+    /**
+     * 删除节点
+     * @param node
+     */
     private void remove(Node<E> node) {
         if (node==null) return;
         size--;
