@@ -3,6 +3,7 @@ package ylc;
 
 import ylc.printer.BinaryTrees;
 import ylc.tree.AVLTree;
+import ylc.tree.RBTree;
 
 public class Test {
     public static void main(String[] args) {
@@ -10,17 +11,15 @@ public class Test {
     }
     static void test1() {
         Integer data[] = new Integer[] {
-                17, 35, 78, 27, 5, 32, 34, 83, 81, 39, 56, 62, 14, 43, 80, 66, 61, 98
+                78, 31, 27, 18, 77, 12, 46, 17, 11, 2, 97, 52
         };
 
-        AVLTree<Integer> avl = new AVLTree<>();
+        RBTree<Integer> rbTree = new RBTree<>();
         for (int i = 0; i < data.length; i++) {
-            avl.add(data[i]);
+            rbTree.add(data[i]);
 
         }
-        avl.remove(78);
-        avl.remove(35);
-        BinaryTrees.println(avl);
+        BinaryTrees.println(rbTree);
     }
 
 }
