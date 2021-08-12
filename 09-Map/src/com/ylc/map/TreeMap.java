@@ -75,9 +75,8 @@ public class TreeMap<K, V> implements Map<K, V> {
 
         if (root == null) { //添加第一个节点
             root = new Node<>(key, value, null);
+            black(root);
             size++;
-            //新添加节点后的处理
-            afterPut(root);
             return null;
         }
         //添加的不是第一个节点
@@ -366,8 +365,7 @@ public class TreeMap<K, V> implements Map<K, V> {
         }
 
         Node<K, V> parent = node.parent;
-        //删除的是根节点
-        if (parent == null) return;
+        if (parent==null) return;
         //删除黑色节点
         //判断被删除node之前是父节点左节点还是又节点
         boolean left = parent.left == null || node.isLeftChild();
