@@ -83,13 +83,11 @@ public class RBTree<E> extends BBST<E> {
      * @param node 被删除的节点
      */
     @Override
-    protected void afterRemove(Node<E> node, Node<E> replacement) {
-        //如果删除节点是红色
-        if (isRed(node)) return;
+    protected void afterRemove(Node<E> node) {
 
-        //用于取代的节点颜色
-        if (isRed(replacement)) {
-            black(replacement);
+        //如果删除节点是红色 或者 用于取代的节点颜色
+        if (isRed(node)) {
+            black(node);
             return;
         }
 
@@ -113,7 +111,7 @@ public class RBTree<E> extends BBST<E> {
             if (isBlack(sibling.left) && isBlack(sibling.right)) {
                 //兄弟节点没有红色子节点，只能父节点向下合并
                 if (isBlack(parent)) {
-                    afterRemove(parent, null);
+                    afterRemove(parent);
                 }
                 black(parent);
                 red(sibling);
@@ -144,7 +142,7 @@ public class RBTree<E> extends BBST<E> {
 
                 //兄弟节点没有红色子节点，只能父节点向下合并
                 if (isBlack(parent)) {
-                    afterRemove(parent, null);
+                    afterRemove(parent);
                 }
                 black(parent);
                 red(sibling);
@@ -167,9 +165,6 @@ public class RBTree<E> extends BBST<E> {
 
     /**
      * 给节点染色
-     * @param node
-     * @param color
-     * @return
      */
     private Node<E> color(Node<E> node, boolean color) {
         if (node==null) return null;
@@ -186,7 +181,6 @@ public class RBTree<E> extends BBST<E> {
 
     /**
      * 查看一个节点的颜色
-     * @param node
      * @return
      */
     private boolean colorOf(Node<E> node) {
