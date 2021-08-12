@@ -17,8 +17,11 @@ public class Test {
         RBTree<Integer> rbTree = new RBTree<>();
         for (Integer datum : data) {
             rbTree.add(datum);
-
         }
+        rbTree.remove(77);
+        rbTree.remove(18);
+        rbTree.remove(97);
+
         BinaryTrees.println(rbTree);
     }
 
