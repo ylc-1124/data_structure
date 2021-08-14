@@ -7,14 +7,14 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
 
-public class HashMap<K, V> implements Map<K, V> {
+public class HashMap_v0<K, V> implements Map<K, V> {
     private int size;
     private static final boolean RED = false;
     private static final boolean BLACK = true;
     private Node<K, V>[] table;  //桶
     private static final int DEFAULT_CAPACITY = 1 << 4;
 
-    public HashMap() {
+    public HashMap_v0() {
         table = new Node[DEFAULT_CAPACITY];
 
     }

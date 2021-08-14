@@ -1,22 +1,22 @@
 package com.ylc;
 
 
-import com.ylc.map.HashMap;
+import com.ylc.map.HashMap_v0;
+import com.ylc.map.HashMap_v1;
 import com.ylc.map.Map;
 import com.ylc.model.Key;
-import com.ylc.model.Person;
 import com.ylc.model.SubKey1;
 import com.ylc.model.SubKey2;
 
 public class Test {
     public static void main(String[] args) {
-        test2(new HashMap<>());
-        test3(new HashMap<>());
-        test4(new HashMap<>());
-        test5(new HashMap<>());
+        test2(new HashMap_v1<>());
+        test3(new HashMap_v1<>());
+        test4(new HashMap_v1<>());
+        test5(new HashMap_v1<>());
     }
 
-    static void test2(HashMap<Object, Integer> map) {
+    static void test2(HashMap_v1<Object, Integer> map) {
         for (int i = 1; i <= 20; i++) {
             map.put(new Key(i), i);
         }
@@ -31,7 +31,7 @@ public class Test {
         Asserts.test(map.get(new Key(8)) == 8);
     }
 
-    static void test3(HashMap<Object, Integer> map) {
+    static void test3(HashMap_v1<Object, Integer> map) {
         map.put(null, 1); // 1
         map.put(new Object(), 2); // 2
         map.put("jack", 3); // 3
@@ -52,7 +52,7 @@ public class Test {
         Asserts.test(map.containsValue(1) == false);
     }
 
-    static void test4(HashMap<Object, Integer> map) {
+    static void test4(HashMap_v1<Object, Integer> map) {
         map.put("jack", 1);
         map.put("rose", 2);
         map.put("jim", 3);
@@ -86,7 +86,7 @@ public class Test {
         });
     }
 
-    static void test5(HashMap<Object, Integer> map) {
+    static void test5(HashMap_v1<Object, Integer> map) {
         for (int i = 1; i <= 20; i++) {
             map.put(new SubKey1(i), i);
         }
