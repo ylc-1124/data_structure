@@ -13,6 +13,7 @@ public class HashMap_v1<K, V> implements Map<K, V> {
     private static final boolean BLACK = true;
     private Node<K, V>[] table;  //桶
     private static final int DEFAULT_CAPACITY = 1 << 4;
+    private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
     public HashMap_v1() {
         table = new Node[DEFAULT_CAPACITY];
@@ -87,6 +88,7 @@ public class HashMap_v1<K, V> implements Map<K, V> {
 
     @Override
     public V put(K key, V value) {
+        resize();
         int index = index(key);
         //取出索引位置的红黑树根节点
         Node<K, V> root = table[index];
@@ -158,6 +160,92 @@ public class HashMap_v1<K, V> implements Map<K, V> {
         afterPut(newNode);
 
         return null;
+
+    }
+
+    private void resize() {
+        //负载因子 <= 0.75
+        if (size / table.length <= DEFAULT_LOAD_FACTOR) return;
+        Node<K, V>[] oldTable = table;
+        table = new Node[oldTable.length << 1];
+
+        Queue<Node<K, V>> queue = new LinkedList<>();
+        for (int i = 0; i < oldTable.length; i++) {
+            if (oldTable[i] == null) {
+                continue;
+            }
+            queue.offer(oldTable[i]);
+            while (!queue.isEmpty()) {
+                Node<K, V> node = queue.poll();
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+                //细节：挪动要放在后面，不然断链了
+                moveNode(node);
+            }
+        }
+    }
+
+    private void moveNode(Node<K, V> newNode) {
+        //重置node
+        newNode.parent = null;
+        newNode.left = null;
+        newNode.right = null;
+        newNode.color = RED;
+
+        int index = index(newNode);
+        //取出索引位置的红黑树根节点
+        Node<K, V> root = table[index];
+        if (root == null) {
+            root = newNode;
+            table[index] = root;
+            afterPut(root);
+            return;
+        }
+        //添加新的节点到红黑树上面
+        //拿到根节点
+        Node<K, V> node = root;
+        Node<K, V> parent = root;
+        int cmp = 0;
+        K k1 = newNode.key;
+        int h1 = newNode.hash;
+
+        do {  //通过循环找到要插入节点位置的父节点是谁
+            parent = node;  //精髓：向左向右之前得先保存一下节点，这个节点就是要添加元素的父节点！！！
+            K k2 = node.key;
+            int h2 = node.hash;
+            if (h1 > h2) {
+                cmp = 1;
+            } else if (h1 < h2) {
+                cmp = -1;
+            } else if (k1 != null && k2 != null
+                    && k1.getClass() == k2.getClass()
+                    && k1 instanceof Comparable
+                    && (cmp = ((Comparable) k1).compareTo(k2)) != 0) {
+
+            } else {
+                cmp = System.identityHashCode(k1) - System.identityHashCode(k2);
+            }
+
+            if (cmp > 0) {
+                node = node.right;
+            } else if (cmp < 0) {
+                node = node.left;
+            }
+        } while (node != null);
+        //看看插入节点应该放在父节点的左边还是右边，通过比较最后一次的 cmp是 < 0还是 > 0
+        newNode.parent = parent;
+        if (cmp < 0) {
+            parent.left = newNode;
+        } else {
+            parent.right = newNode;
+        }
+        //新添加节点后的处理
+        afterPut(newNode);
+
     }
 
     @Override
