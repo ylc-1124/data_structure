@@ -101,10 +101,39 @@ public class HashMap<K, V> implements Map<K, V> {
         Node<K, V> node = root;
         Node<K, V> parent = root;
         int cmp = 0;
-        int h1 = key == null ? 0 : key.hashCode();
+        K k1 = key;
+        int h1 = k1 == null ? 0 : k1.hashCode();
+        Node<K, V> result = null;
+        boolean searched = false;  //是否扫描过了
         do {  //通过循环找到要插入节点位置的父节点是谁
-            cmp = compare(key, node.key,h1, node.hash);
             parent = node;  //精髓：向左向右之前得先保存一下节点，这个节点就是要添加元素的父节点！！！
+            K k2 = node.key;
+            int h2 = node.hash;
+            if (h1 > h2) {
+                cmp = 1;
+            } else if (h1 < h2) {
+                cmp = -1;
+            } else if (Objects.equals(k1, k2)) {
+                cmp = 0;
+            } else if (k1 != null && k2 != null
+                    && k1.getClass() == k2.getClass()
+                    && k1 instanceof Comparable
+                    && (cmp = ((Comparable) k1).compareTo(k2)) != 0) {
+
+            } else if (searched) {  // 扫描过了
+                cmp = System.identityHashCode(k1) - System.identityHashCode(k2);
+            } else { //还没有扫描，先扫描，再根据内存地址往左往右
+                if (node.left != null && (result = node(node.left, k1)) != null
+                        || node.right != null && (result = node(node.right, k1)) != null) {
+                    //已经存在这个key
+                    cmp = 0;
+                    node = result;
+                } else {    //不存在这个key，新添加
+                    searched = true;
+                    cmp = System.identityHashCode(k1) - System.identityHashCode(k2);
+                }
+
+            }
             if (cmp > 0) {
                 node = node.right;
             } else if (cmp < 0) {
@@ -142,16 +171,35 @@ public class HashMap<K, V> implements Map<K, V> {
      * @return
      */
     private Node<K, V> node(K key) {
-        Node<K, V> node = table[index(key)];
-        int h1 = key == null ? 0 : key.hashCode();
+        Node<K, V> root = table[index(key)];
+        return root == null ? null : node(root, key);
+    }
+
+    private Node<K, V> node(Node<K, V> node, K k1) {
+        int h1 = k1 == null ? 0 : k1.hashCode();
+        Node<K, V> result = null;
+        int cmp = 0;
         while (node != null) {
-            int cmp = compare(key, node.key, h1, node.hash);
-            if (cmp==0) return node;
-            if (cmp > 0) {
+            int h2 = node.hash;
+            K k2 = node.key;
+            //比较哈希值
+            if (h1 > h2) {
                 node = node.right;
-            } else if (cmp < 0) {
+            } else if (h1 < h2) {
+                node = node.left;
+            } else if (Objects.equals(k1, k2)) {
+                return node;
+            } else if (k1 != null && k2 != null
+                    && k1.getClass() == k2.getClass()
+                    && k1 instanceof Comparable
+                    && (((Comparable) k1).compareTo(k2)) != 0) {
+                node = cmp > 0 ? node.right : node.left;
+            } else if (node.right != null && (result = node(node.right, k1)) != null) {  //哈希值相等，但不具备可比较性,也不equals
+                return result;
+            } else {  //只能往左边找
                 node = node.left;
             }
+
         }
 
         return null;
@@ -457,44 +505,6 @@ public class HashMap<K, V> implements Map<K, V> {
 
     }
 
-    /**
-     *
-     * @param k1
-     * @param k2
-     * @param h1  k1的hashCode
-     * @param h2  k2的hashCode
-     * @return
-     */
-    private int compare(K k1, K k2, int h1, int h2) {
-            //比较哈希值
-        int result = h1 - h2;
-        if (result != 0) {
-            return result;
-        }
-        //比较equals
-        if (Objects.equals(k1, k2)) {
-            return 0;
-        }
-        //哈希值相等 但equals不相等
-         //比较类名
-        if (k1 != null && k2 != null) {
-            String k1Cls = k1.getClass().getName();
-            String k2Cls = k2.getClass().getName();
-            result = k1Cls.compareTo(k2Cls);
-            if (result != 0) {
-                return result;
-            }
-            //同一种类型
-            if (k1 instanceof Comparable) {
-                //k1是可比较的
-                return ((Comparable) k1).compareTo(k2);
-            }
-        }
-         //哈希值相等，同一类型
-        // k1 为null k2 不为null
-        // k1 不为null k2为null
-        return System.identityHashCode(k1) - System.identityHashCode(k2);
-    }
 
     private int index(Node<K, V> node) {
         return (node.hash ^ (node.hash >>> 16)) & (table.length - 1);
@@ -504,11 +514,13 @@ public class HashMap<K, V> implements Map<K, V> {
         if (node==null) return null;
         size--;
         V oldValue = node.value;
+
         if (node.hasTwoChildren()) { //度为2的节点
             Node<K, V> s = successor(node); //找到后继节点
             //用后继结点的值覆盖度为2节点的值
             node.key = s.key;
             node.value = s.value;
+            node.hash = s.hash;
             //删除后继节点
             node = s;
         }
