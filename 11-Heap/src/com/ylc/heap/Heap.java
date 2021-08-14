@@ -9,9 +9,9 @@ public interface Heap<E> {
 
     void add(E element);
 
-    E get();
+    E get();  //获取堆顶元素
 
-    E remove();
+    E remove(); //删除堆顶元素
 
     E replace(E element);
 
