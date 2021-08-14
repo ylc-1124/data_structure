@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
 
-public class HashMap_v1<K, V> implements Map<K, V> {
+public class HashMap<K, V> implements Map<K, V> {
     private int size;
     private static final boolean RED = false;
     private static final boolean BLACK = true;
@@ -15,12 +15,12 @@ public class HashMap_v1<K, V> implements Map<K, V> {
     private static final int DEFAULT_CAPACITY = 1 << 4;
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
-    public HashMap_v1() {
+    public HashMap() {
         table = new Node[DEFAULT_CAPACITY];
 
     }
 
-    private static class Node<K, V> {
+    protected static class Node<K, V> {
         int hash;
         K key;
         V value;
@@ -70,6 +70,9 @@ public class HashMap_v1<K, V> implements Map<K, V> {
         return size;
     }
 
+    protected Node<K, V> createNode(K key, V value, Node<K, V> parent) {
+        return new Node<>(key, value, parent);
+    }
     @Override
     public boolean isEmpty() {
         return false;
@@ -93,10 +96,10 @@ public class HashMap_v1<K, V> implements Map<K, V> {
         //取出索引位置的红黑树根节点
         Node<K, V> root = table[index];
         if (root == null) {
-            root = new Node<>(key, value, null);
+            root = createNode(key, value, null);
             table[index] = root;
             size++;
-            afterPut(root);
+            fixAfterPut(root);
             return null;
         }
         //添加新的节点到红黑树上面
@@ -149,7 +152,7 @@ public class HashMap_v1<K, V> implements Map<K, V> {
             }
         } while (node != null);
         //看看插入节点应该放在父节点的左边还是右边，通过比较最后一次的 cmp是 < 0还是 > 0
-        Node<K, V> newNode = new Node<>(key, value, parent);
+        Node<K, V> newNode = createNode(key, value, parent);
         if (cmp < 0) {
             parent.left = newNode;
         } else {
@@ -157,7 +160,7 @@ public class HashMap_v1<K, V> implements Map<K, V> {
         }
         size++;  //添加完成
         //新添加节点后的处理
-        afterPut(newNode);
+        fixAfterPut(newNode);
 
         return null;
 
@@ -202,7 +205,7 @@ public class HashMap_v1<K, V> implements Map<K, V> {
         if (root == null) {
             root = newNode;
             table[index] = root;
-            afterPut(root);
+            fixAfterPut(root);
             return;
         }
         //添加新的节点到红黑树上面
@@ -244,7 +247,7 @@ public class HashMap_v1<K, V> implements Map<K, V> {
             parent.right = newNode;
         }
         //新添加节点后的处理
-        afterPut(newNode);
+        fixAfterPut(newNode);
 
     }
 
@@ -408,7 +411,7 @@ public class HashMap_v1<K, V> implements Map<K, V> {
         int hash = key.hashCode();
         return hash ^ (hash >>> 16);
     }
-    protected void afterRemove(Node<K, V> node) {
+    protected void fixAfterRemove(Node<K, V> node) {
         //如果删除节点是红色 或者 用于取代的节点颜色
         if (isRed(node)) {
             black(node);
@@ -434,7 +437,7 @@ public class HashMap_v1<K, V> implements Map<K, V> {
             if (isBlack(sibling.left) && isBlack(sibling.right)) {
                 //兄弟节点没有红色子节点，只能父节点向下合并
                 if (isBlack(parent)) {
-                    afterRemove(parent);
+                    fixAfterRemove(parent);
                 }
                 black(parent);
                 red(sibling);
@@ -465,7 +468,7 @@ public class HashMap_v1<K, V> implements Map<K, V> {
 
                 //兄弟节点没有红色子节点，只能父节点向下合并
                 if (isBlack(parent)) {
-                    afterRemove(parent);
+                    fixAfterRemove(parent);
                 }
                 black(parent);
                 red(sibling);
@@ -485,7 +488,11 @@ public class HashMap_v1<K, V> implements Map<K, V> {
         }
 
     }
-    private void afterPut(Node<K, V> node) {
+
+    protected void afterRemove(Node<K, V> willNode,Node<K, V> removedNode) {
+
+    }
+    private void fixAfterPut(Node<K, V> node) {
         Node<K, V> parent = node.parent;
         //如果添加的是根节点
         if (parent == null) {
@@ -503,7 +510,7 @@ public class HashMap_v1<K, V> implements Map<K, V> {
             black(parent);
             black(uncle);
             //祖父节点当作新添加的节点
-            afterPut(grand);
+            fixAfterPut(grand);
             return;
         }
         //叔父节点不是红色
@@ -608,8 +615,9 @@ public class HashMap_v1<K, V> implements Map<K, V> {
         return node.hash & (table.length - 1);
     }
 
-    private V remove(Node<K, V> node) {
-        if (node==null) return null;
+    protected V remove(Node<K, V> node) {
+        if (node == null) return null;
+        Node<K, V> willNode = node;
         size--;
         V oldValue = node.value;
 
@@ -621,6 +629,7 @@ public class HashMap_v1<K, V> implements Map<K, V> {
             node.hash = s.hash;
             //删除后继节点
             node = s;
+
         }
         //删除node节点 到这里的node 度必然为0或者1
         Node<K, V> replacement = node.left != null ? node.left : node.right;
@@ -637,20 +646,25 @@ public class HashMap_v1<K, V> implements Map<K, V> {
             } else if (node == node.parent.right){
                 node.parent.right = replacement;
             }
-            afterRemove(replacement); //删完之后调整
+            fixAfterRemove(replacement); //删完之后调整
         } else if (node.parent == null) { //叶子节点并且是根节点
             table[index] = null;
-            afterRemove(node); //删完之后调整
+            fixAfterRemove(node); //删完之后调整
         } else {//叶子节点
             if (node == node.parent.left) {
                 node.parent.left = null;
             } else {
                 node.parent.right = null;
             }
-            afterRemove(node); //删完之后调整
+            fixAfterRemove(node); //删完之后调整
         }
+
+        //交给子类处理
+        afterRemove(willNode, node);
         return oldValue;
     }
+
+
     /**
      * 找后继结点
      *
