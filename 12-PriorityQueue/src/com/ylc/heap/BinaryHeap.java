@@ -1,6 +1,6 @@
 package com.ylc.heap;
 
-import com.ylc.printer.BinaryTreeInfo;
+
 
 import java.util.Comparator;
 
@@ -8,7 +8,7 @@ import java.util.Comparator;
  * 二叉堆（最大堆）
  * @param <E>
  */
-public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
+public class BinaryHeap<E> extends AbstractHeap<E>  {
     private E[] elements;
     private static final int DEFAULT_CAPACITY = 10;
 
@@ -193,28 +193,5 @@ public class BinaryHeap<E> extends AbstractHeap<E> implements BinaryTreeInfo {
         elements[index] = element;
     }
 
-    @Override
-    public Object root() {
-        return 0;
-    }
-
-    @Override
-    public Object left(Object node) {
-        int index = ((int) node << 1) + 1;
-        return index >= size ? null : index;
-    }
-
-    @Override
-    public Object right(Object node) {
-        Integer index = (Integer) node;
-        index = (index << 1) + 2;
-        return index >= size ? null : index;
-    }
-
-    @Override
-    public Object string(Object node) {
-        Integer index = (Integer) node;
-        return elements[index];
-    }
 
 }
