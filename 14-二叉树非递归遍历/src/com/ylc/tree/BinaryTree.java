@@ -78,10 +78,10 @@ public class BinaryTree<E>  implements BinaryTreeInfo {
     }
 
     /**
-     * 前序遍历，非递归
+     * 前序遍历，非递归 方法二
      * @param visitor
      */
-    public void preorder(Visitor<E> visitor) {
+    public void preorder2(Visitor<E> visitor) {
         if (visitor==null||root==null) return;
         Node<E> node = root;
         Stack<Node<E>> stack = new Stack<>();
@@ -104,6 +104,28 @@ public class BinaryTree<E>  implements BinaryTreeInfo {
 
             }
 
+
+        }
+    }
+    /**
+     * 前序遍历，非递归 方法一（很像层序遍历的非递归）
+     * @param visitor
+     */
+    public void preorder(Visitor<E> visitor) {
+        if (visitor==null||root==null) return;
+        Stack<Node<E>> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            Node<E> node = stack.pop();
+            //...
+            if (visitor.visit(node.element)) return;
+
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            if (node.left != null) {
+                stack.push(node.left);
+            }
 
         }
     }
